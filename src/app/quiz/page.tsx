@@ -317,7 +317,7 @@ export default function QuizPage() {
       )}
       
       <Card className="glass-card w-full max-w-2xl relative z-10 animate-fade-in-up">
-        <CardHeader className="pb-2 sm:pb-4">
+        <CardHeader className="pb-1 sm:pb-4">
           {/* 진행률 섹션 */}
           <div className="space-y-2 sm:space-y-4">
             <div className="flex items-center justify-between">
@@ -357,24 +357,24 @@ export default function QuizPage() {
             </div>
           </div>
           
-          <CardDescription className="text-base md:text-lg lg:text-xl text-foreground leading-relaxed pt-2 sm:pt-4 break-words">
+          <CardDescription className="text-base md:text-lg lg:text-xl text-foreground leading-relaxed pt-1 sm:pt-4 break-words">
             <span className="sr-only">질문 {currentQuestionIndex + 1}:</span>
             {currentQuestion.question}
           </CardDescription>
         </CardHeader>
         
-        <CardContent className="py-2 sm:py-4">
+        <CardContent className="py-1 sm:py-4">
           <RadioGroup
             onValueChange={handleAnswerChange}
             value={answers[currentQuestion.id]?.toString() || ""}
-            className="space-y-1.5 sm:space-y-3"
+            className="space-y-1 sm:space-y-3"
             aria-labelledby={`question-${currentQuestion.id}`}
           >
             {currentQuestion.options.map((option, index) => (
               <div
                 key={option.score}
                 onClick={() => handleAnswerChange(option.score.toString())}
-                className={`option-card flex items-center space-x-2 sm:space-x-4 p-2.5 sm:p-5 rounded-xl cursor-pointer hover:cursor-pointer border-2 transition-all duration-300
+                className={`option-card flex items-center space-x-2 sm:space-x-4 p-2 sm:p-5 rounded-xl cursor-pointer hover:cursor-pointer border-2 transition-all duration-300
                   ${answers[currentQuestion.id] === option.score 
                     ? 'bg-gradient-to-r from-blue-500/15 to-emerald-500/15 border-blue-500/60 shadow-lg shadow-blue-500/20 scale-[1.02]' 
                     : 'bg-secondary/30 border-border/50 hover:border-blue-300/50 hover:bg-secondary/50'
@@ -412,7 +412,7 @@ export default function QuizPage() {
                   )}
                 </div>
                 
-                <div className="text-sm sm:text-base flex-1 leading-snug sm:leading-relaxed font-medium pointer-events-none break-words">
+                <div className="text-sm sm:text-base flex-1 leading-tight sm:leading-relaxed font-medium pointer-events-none break-words">
                   {option.text}
                   <span id={`option-${option.score}-description`} className="sr-only">
                     {index + 1}번 선택지: {option.text}
@@ -432,12 +432,12 @@ export default function QuizPage() {
           </RadioGroup>
         </CardContent>
         
-        <CardFooter className="flex flex-col sm:flex-row pt-4 sm:pt-8 pb-4 sm:pb-8 gap-3 sm:gap-4">
+        <CardFooter className="flex flex-col sm:flex-row pt-2 sm:pt-8 pb-3 sm:pb-8 gap-2 sm:gap-4">
           <Button
             onClick={handlePrevious}
             disabled={currentQuestionIndex === 0}
             variant="outline"
-            className="w-full sm:flex-1 px-6 sm:px-12 py-4 sm:py-8 text-base sm:text-xl rounded-xl font-semibold transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed order-2 sm:order-1"
+            className="w-full sm:flex-1 px-4 sm:px-12 py-3 sm:py-8 text-base sm:text-xl rounded-xl font-semibold transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed order-2 sm:order-1"
             aria-label="이전 질문으로 이동"
           >
             <svg className="w-4 h-4 sm:w-6 sm:h-6 mr-2 sm:mr-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -449,7 +449,7 @@ export default function QuizPage() {
           <Button
             onClick={handleNext}
             disabled={!isAnswerSelected}
-            className="w-full sm:flex-1 px-6 sm:px-12 py-4 sm:py-8 text-base sm:text-xl rounded-xl font-semibold transition-all duration-300 bg-blue-600 hover:bg-blue-700 text-white shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed order-1 sm:order-2"
+            className="w-full sm:flex-1 px-4 sm:px-12 py-3 sm:py-8 text-base sm:text-xl rounded-xl font-semibold transition-all duration-300 bg-blue-600 hover:bg-blue-700 text-white shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed order-1 sm:order-2"
             aria-label={currentQuestionIndex === quizQuestions.length - 1 ? "테스트 완료하고 결과 보기" : "다음 질문으로 이동"}
           >
             {currentQuestionIndex === quizQuestions.length - 1 ? (
