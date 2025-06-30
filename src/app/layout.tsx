@@ -3,15 +3,15 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: {
-    default: "ADHD 심리테스트",
-    template: "%s | ADHD 심리테스트"
+    default: "ADHD 자가진단 테스트",
+    template: "%s | ADHD 자가진단"
   },
-  description: "주의력 결핍 과잉행동 장애(ADHD) 성향을 알아보는 자가진단 테스트입니다. 18개 문항으로 구성된 간단하고 신뢰할 수 있는 온라인 테스트를 통해 10-15분 내에 결과를 확인하세요.",
+  description: "성인 ADHD 성향을 알아보는 자가진단 테스트입니다. 18개 문항으로 구성된 간단하고 신뢰할 수 있는 온라인 테스트를 통해 10-15분 내에 결과를 확인하세요.",
   keywords: [
     "ADHD",
+    "성인ADHD", 
     "주의력 결핍",
     "과잉행동",
-    "심리테스트",
     "자가진단",
     "집중력",
     "충동성",
@@ -19,9 +19,9 @@ export const metadata: Metadata = {
     "온라인 테스트",
     "정신건강"
   ],
-  authors: [{ name: "ADHD 테스트" }],
-  creator: "ADHD 테스트",
-  publisher: "ADHD 테스트",
+  authors: [{ name: "ADHD 자가진단 테스트" }],
+  creator: "ADHD 자가진단 테스트",
+  publisher: "ADHD 자가진단 테스트",
   robots: {
     index: true,
     follow: true,
@@ -37,22 +37,22 @@ export const metadata: Metadata = {
     type: "website",
     locale: "ko_KR",
     url: "https://adhd-test.example.com",
-    siteName: "ADHD 심리테스트",
-    title: "ADHD 심리테스트 - 간단한 자가진단",
-    description: "주의력 결핍 과잉행동 장애(ADHD) 성향을 알아보는 신뢰할 수 있는 온라인 자가진단 테스트",
+    siteName: "ADHD 자가진단 테스트",
+    title: "ADHD 자가진단 테스트 - 간단한 성인 ADHD 진단",
+    description: "성인 ADHD 성향을 알아보는 신뢰할 수 있는 온라인 자가진단 테스트로 정확한 결과를 확인하세요",
     images: [
       {
         url: "/og-image.jpg",
         width: 1200,
         height: 630,
-        alt: "ADHD 심리테스트",
+        alt: "ADHD 자가진단 테스트",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "ADHD 심리테스트 - 간단한 자가진단",
-    description: "주의력 결핍 과잉행동 장애(ADHD) 성향을 알아보는 신뢰할 수 있는 온라인 자가진단 테스트",
+    title: "ADHD 자가진단 테스트 - 간단한 성인 ADHD 진단",
+    description: "성인 ADHD 성향을 알아보는 신뢰할 수 있는 온라인 자가진단 테스트로 정확한 결과를 확인하세요",
     images: ["/og-image.jpg"],
   },
   alternates: {
@@ -102,8 +102,8 @@ export default function RootLayout({
             __html: JSON.stringify({
               "@context": "https://schema.org",
               "@type": "WebApplication",
-              "name": "ADHD 심리테스트",
-              "description": "주의력 결핍 과잉행동 장애(ADHD) 성향을 알아보는 자가진단 테스트",
+              "name": "ADHD 자가진단 테스트",
+              "description": "성인 ADHD 성향을 알아보는 자가진단 테스트",
               "applicationCategory": "HealthApplication",
               "operatingSystem": "Web",
               "inLanguage": "ko-KR",

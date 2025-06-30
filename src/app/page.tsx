@@ -16,7 +16,7 @@ export default function Home() {
     {
       icon: "✓",
       title: "정확한 평가",
-      description: "ADHD 3대 핵심 영역을 종합적으로 평가합니다.",
+      description: "ADHD 핵심 영역을 종합적으로 평가합니다.",
       color: "text-blue-600"
     },
     {
@@ -42,11 +42,11 @@ export default function Home() {
         <Card className={`glass-card text-center transition-all duration-1000 ${isLoaded ? 'animate-fade-in-up' : 'opacity-0 translate-y-10'}`}>
           <CardHeader className="pb-6">
             <CardTitle className="text-4xl md:text-5xl font-bold gradient-text mb-4 leading-tight">
-              ADHD 심리테스트
+              ADHD 자가진단 테스트
             </CardTitle>
             <CardDescription className="text-base md:text-lg lg:text-xl text-muted-foreground leading-relaxed space-y-2">
               <div className="break-words">
-                주의력 결핍 과잉행동 장애(ADHD) 성향을 알아보는<br className="sm:hidden" /> 
+                성인 ADHD 성향을 알아보는<br className="sm:hidden" /> 
                 자가진단 테스트입니다.
               </div>
               <div className="flex flex-wrap items-center justify-center gap-1 sm:gap-2 mt-3">
