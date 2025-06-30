@@ -201,17 +201,8 @@ function ResultLoading() {
 function ResultContent() {
   const searchParams = useSearchParams();
   
-  // 디버깅: URL 파라미터 확인
-  console.log('🔍 현재 URL 파라미터들:', {
-    all: Object.fromEntries(searchParams.entries()),
-    d: searchParams.get('d'),
-    partA: searchParams.get('partA'),
-    partB: searchParams.get('partB')
-  });
-  
   // 압축된 데이터에서 결과 추출
   const compactResult = extractResultFromUrl(searchParams);
-  console.log('🔍 압축된 결과 데이터:', compactResult);
   
   // 압축된 데이터가 없으면 기존 방식으로 폴백 (호환성)
   let partA: number, partB: number, distractionType: string | undefined;

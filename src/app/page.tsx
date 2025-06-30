@@ -44,10 +44,18 @@ export default function Home() {
             <CardTitle className="text-4xl md:text-5xl font-bold gradient-text mb-4 leading-tight">
               ADHD 심리테스트
             </CardTitle>
-            <CardDescription className="text-lg md:text-xl text-muted-foreground leading-relaxed">
-              주의력 결핍 과잉행동 장애(ADHD) 성향을 알아보는 자가진단 테스트입니다. 
-              총 <span className="font-semibold text-blue-600 bg-blue-50 px-2 py-1 rounded">18개 문항</span>, 
-              <span className="font-semibold text-emerald-600 bg-emerald-50 px-2 py-1 rounded">10-15분</span> 소요됩니다.
+            <CardDescription className="text-base md:text-lg lg:text-xl text-muted-foreground leading-relaxed space-y-2">
+              <div className="break-words">
+                주의력 결핍 과잉행동 장애(ADHD) 성향을 알아보는<br className="sm:hidden" /> 
+                자가진단 테스트입니다.
+              </div>
+              <div className="flex flex-wrap items-center justify-center gap-1 sm:gap-2 mt-3">
+                <span>총</span>
+                <span className="font-semibold text-blue-600 bg-blue-50 px-2 py-1 rounded text-sm sm:text-base">18개 문항</span>
+                <span className="sm:hidden">•</span>
+                <span className="font-semibold text-emerald-600 bg-emerald-50 px-2 py-1 rounded text-sm sm:text-base">3분</span>
+                <span>소요됩니다.</span>
+              </div>
             </CardDescription>
           </CardHeader>
           

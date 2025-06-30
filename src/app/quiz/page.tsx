@@ -180,8 +180,6 @@ export default function QuizPage() {
     
     // 산만함 요소 클릭 시 최대 점수로 결과 생성 (압축된 URL 사용) - 무조건 만점!
     const resultUrl = createResultUrl(24, 48, type);
-    console.log('🚂 토마스 클릭! 생성된 URL:', resultUrl);
-    console.log('🚂 토마스 타입:', type);
     router.push(resultUrl);
   }, [router]);
 
@@ -230,7 +228,7 @@ export default function QuizPage() {
   }, [isAnswerSelected, handleNext, handlePrevious, handleAnswerChange, currentQuestionIndex]);
 
   return (
-    <div className="gradient-bg min-h-screen flex items-center justify-center p-4 relative overflow-hidden"> 
+    <div className="gradient-bg min-h-screen flex items-center justify-center p-2 sm:p-4 relative overflow-hidden"> 
       <div className="absolute inset-0 bg-gradient-to-br from-blue-500/8 via-transparent to-emerald-500/8"></div>
       
       {/* 스크린 리더용 공지 영역 */}
@@ -298,9 +296,9 @@ export default function QuizPage() {
       })}
       
       <Card className="glass-card w-full max-w-2xl relative z-10 animate-fade-in-up">
-        <CardHeader className="pb-4">
+        <CardHeader className="pb-2 sm:pb-4">
           {/* 진행률 섹션 */}
-          <div className="space-y-4">
+          <div className="space-y-2 sm:space-y-4">
             <div className="flex items-center justify-between">
               <CardTitle className="text-lg sm:text-xl md:text-2xl font-bold gradient-text">
                 질문 {currentQuestionIndex + 1}
@@ -338,24 +336,24 @@ export default function QuizPage() {
             </div>
           </div>
           
-          <CardDescription className="text-base md:text-lg lg:text-xl text-foreground leading-relaxed pt-4 sm:pt-6 break-words">
+          <CardDescription className="text-base md:text-lg lg:text-xl text-foreground leading-relaxed pt-2 sm:pt-4 break-words">
             <span className="sr-only">질문 {currentQuestionIndex + 1}:</span>
             {currentQuestion.question}
           </CardDescription>
         </CardHeader>
         
-        <CardContent className="py-4">
+        <CardContent className="py-2 sm:py-4">
           <RadioGroup
             onValueChange={handleAnswerChange}
             value={answers[currentQuestion.id]?.toString() || ""}
-            className="space-y-2 sm:space-y-3"
+            className="space-y-1.5 sm:space-y-3"
             aria-labelledby={`question-${currentQuestion.id}`}
           >
             {currentQuestion.options.map((option, index) => (
               <div
                 key={option.score}
                 onClick={() => handleAnswerChange(option.score.toString())}
-                className={`option-card flex items-center space-x-3 sm:space-x-4 p-3 sm:p-5 rounded-xl cursor-pointer hover:cursor-pointer border-2 transition-all duration-300
+                className={`option-card flex items-center space-x-2 sm:space-x-4 p-2.5 sm:p-5 rounded-xl cursor-pointer hover:cursor-pointer border-2 transition-all duration-300
                   ${answers[currentQuestion.id] === option.score 
                     ? 'bg-gradient-to-r from-blue-500/15 to-emerald-500/15 border-blue-500/60 shadow-lg shadow-blue-500/20 scale-[1.02]' 
                     : 'bg-secondary/30 border-border/50 hover:border-blue-300/50 hover:bg-secondary/50'
@@ -413,15 +411,15 @@ export default function QuizPage() {
           </RadioGroup>
         </CardContent>
         
-        <CardFooter className="flex flex-col sm:flex-row pt-8 pb-8 gap-4">
+        <CardFooter className="flex flex-col sm:flex-row pt-4 sm:pt-8 pb-4 sm:pb-8 gap-3 sm:gap-4">
           <Button
             onClick={handlePrevious}
             disabled={currentQuestionIndex === 0}
             variant="outline"
-            className="w-full sm:flex-1 px-8 sm:px-12 py-6 sm:py-8 text-lg sm:text-xl rounded-xl font-semibold transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed order-2 sm:order-1"
+            className="w-full sm:flex-1 px-6 sm:px-12 py-4 sm:py-8 text-base sm:text-xl rounded-xl font-semibold transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed order-2 sm:order-1"
             aria-label="이전 질문으로 이동"
           >
-            <svg className="w-5 h-5 sm:w-6 sm:h-6 mr-3 sm:mr-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-4 h-4 sm:w-6 sm:h-6 mr-2 sm:mr-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
             </svg>
             이전
@@ -430,20 +428,20 @@ export default function QuizPage() {
           <Button
             onClick={handleNext}
             disabled={!isAnswerSelected}
-            className="w-full sm:flex-1 px-8 sm:px-12 py-6 sm:py-8 text-lg sm:text-xl rounded-xl font-semibold transition-all duration-300 bg-blue-600 hover:bg-blue-700 text-white shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed order-1 sm:order-2"
+            className="w-full sm:flex-1 px-6 sm:px-12 py-4 sm:py-8 text-base sm:text-xl rounded-xl font-semibold transition-all duration-300 bg-blue-600 hover:bg-blue-700 text-white shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed order-1 sm:order-2"
             aria-label={currentQuestionIndex === quizQuestions.length - 1 ? "테스트 완료하고 결과 보기" : "다음 질문으로 이동"}
           >
             {currentQuestionIndex === quizQuestions.length - 1 ? (
               <>
                 결과 보기
-                <svg className="w-5 h-5 sm:w-6 sm:h-6 ml-3 sm:ml-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-4 h-4 sm:w-6 sm:h-6 ml-2 sm:ml-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
               </>
             ) : (
               <>
                 다음
-                <svg className="w-5 h-5 sm:w-6 sm:h-6 ml-3 sm:ml-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-4 h-4 sm:w-6 sm:h-6 ml-2 sm:ml-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                 </svg>
               </>
