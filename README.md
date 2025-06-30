@@ -1,36 +1,166 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# ADHD 자가진단 테스트 🧠
 
-## Getting Started
+성인 ADHD 성향을 알아보는 자가진단 테스트 웹 애플리케이션입니다.
 
-First, run the development server:
+## ✨ 주요 기능
+
+- **18개 질문**: 체계적으로 구성된 ADHD 성향 진단 문항
+- **실시간 진행률**: 시각적 진행률 표시로 테스트 진행 상황 확인
+- **상세한 결과 분석**: 주의력결핍과 과잉행동 영역별 점수 제공
+- **산만함 테스트**: 테스트 중 나타나는 토마스 요소로 주의력 평가
+- **반응형 디자인**: 모바일, 태블릿, 데스크톱 모든 기기에서 최적화
+- **접근성 지원**: 키보드 네비게이션, 스크린 리더 지원
+- **결과 공유**: URL 압축을 통한 간편한 결과 공유
+
+## 🎯 특별한 기능
+
+### 토마스 산만함 요소
+
+- 테스트 진행 중 랜덤하게 나타나는 토마스 기차
+- 6가지 방향에서 다양한 애니메이션으로 등장
+- 클릭 시 특별한 결과 페이지로 이동
+- ADHD의 주의력 분산 특성을 재현
+
+### 점수 계산 시스템
+
+- **Part A (주의력결핍)**: 9개 문항 (1-9번)
+- **Part B (과잉행동/충동성)**: 9개 문항 (10-18번)
+- 각 영역별 세부 평가 및 종합 점수 제공
+
+## 🛠 기술 스택
+
+- **Frontend**: Next.js 14, TypeScript
+- **Styling**: Tailwind CSS
+- **UI Components**: shadcn/ui
+- **Icons**: Lucide React
+- **Fonts**: Pretendard Variable
+
+## 🚀 설치 및 실행
+
+### 필수 요구사항
+
+- Node.js 18.17 이상
+- npm 또는 yarn
+
+### 설치
+
+```bash
+# 저장소 클론
+git clone <repository-url>
+cd adhd
+
+# 의존성 설치
+npm install
+# 또는
+yarn install
+```
+
+### 개발 서버 실행
 
 ```bash
 npm run dev
-# or
+# 또는
 yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+http://localhost:3000에서 애플리케이션을 확인할 수 있습니다.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 빌드
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm run build
+# 또는
+yarn build
+```
 
-## Learn More
+## 📁 프로젝트 구조
 
-To learn more about Next.js, take a look at the following resources:
+```
+src/
+├── app/                    # Next.js App Router
+│   ├── layout.tsx         # 전역 레이아웃
+│   ├── page.tsx           # 메인 페이지
+│   ├── quiz/
+│   │   └── page.tsx       # 퀴즈 페이지
+│   └── result/
+│       └── page.tsx       # 결과 페이지
+├── components/
+│   └── ui/                # shadcn/ui 컴포넌트
+├── data/
+│   └── quiz.ts           # 퀴즈 데이터 및 평가 로직
+└── lib/
+    └── utils.ts          # 유틸리티 함수
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 🎨 주요 페이지
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### 1. 메인 페이지 (`/`)
 
-## Deploy on Vercel
+- 테스트 소개 및 안내사항
+- 테스트 시작 버튼
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### 2. 퀴즈 페이지 (`/quiz`)
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- 18개 질문 순차 진행
+- 실시간 진행률 표시
+- 토마스 산만함 요소
+- 키보드 네비게이션 지원
+
+### 3. 결과 페이지 (`/result`)
+
+- 상세한 점수 분석
+- 영역별 평가 결과
+- 권장사항 및 해석
+- 결과 공유 기능
+
+## 🎮 사용법
+
+1. **테스트 시작**: 메인 페이지에서 "테스트 시작하기" 클릭
+2. **질문 응답**: 각 질문에 대해 해당하는 정도 선택
+3. **진행**: "다음" 버튼으로 다음 질문으로 이동
+4. **결과 확인**: 모든 질문 완료 후 상세한 분석 결과 확인
+
+### 키보드 단축키
+
+- `1-5`: 선택지 번호로 직접 선택
+- `Enter`: 다음 질문으로 이동
+- `ESC`: 이전 질문으로 이동
+
+## ⚡ 성능 최적화
+
+- **이미지 최적화**: Next.js Image 컴포넌트 사용
+- **폰트 최적화**: Pretendard Variable 폰트 사용
+- **코드 분할**: Next.js 자동 코드 분할
+- **반응형 이미지**: 다양한 화면 크기 대응
+
+## 🔒 개인정보 보호
+
+- 클라이언트 사이드에서만 데이터 처리
+- 개인정보 수집하지 않음
+- 결과는 URL 파라미터로만 전달
+
+## 📱 모바일 최적화
+
+- 터치 친화적 인터페이스
+- 모바일에서 최적화된 크기 조정
+- 가로/세로 화면 모두 지원
+
+## 🎯 접근성 (Accessibility)
+
+- WCAG 2.1 가이드라인 준수
+- 키보드만으로 모든 기능 이용 가능
+- 스크린 리더 지원
+- 적절한 색상 대비
+- 의미 있는 HTML 구조
+
+## 📄 라이선스
+
+이 프로젝트는 개인 사용 및 교육 목적으로 제작되었습니다.
+
+## ⚠️ 중요 안내
+
+이 테스트는 자가진단 도구로, 의학적 진단을 대체할 수 없습니다. 정확한 진단이 필요하시다면 정신건강 전문의와 상담하시기 바랍니다.
+
+---
+
+Made with ❤️ for better mental health awareness
