@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback, useRef, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -43,17 +43,19 @@ export default function QuizPage() {
     }
   }, []);
 
-  // 토마스 전용 상태 관리
-  const [thomasExists, setThomasExists] = useState(false);
+  // 토마스 전용 상태 관리 (질문과 완전 독립)
+  const thomasExistsRef = useRef(false);
   const [thomasDirection, setThomasDirection] = useState<'left-right' | 'right-left' | 'top-bottom' | 'bottom-top' | 'diagonal-1' | 'diagonal-2'>('left-right');
 
-  // 토마스 생성 함수 (랜덤 타이밍)
+  // 토마스 생성 함수 (완전 독립적, 질문 상태와 무관)
   const createThomas = useCallback(() => {
     // 이미 토마스가 존재하면 생성하지 않음
-    if (thomasExists) return;
+    if (thomasExistsRef.current) return;
 
-    // 첫 번째 질문부터 랜덤하게 나타남 (높은 확률)
-    if (currentQuestionIndex >= 0 && Math.random() < 0.85) {
+    // 퀴즈 진행 중 항상 높은 확률로 나타남
+    if (Math.random() < 0.85) {
+      console.log('🚂 토마스 생성 시작!'); // 디버깅용
+      
       // 다양한 방향 중 랜덤 선택
       const directions: Array<'left-right' | 'right-left' | 'top-bottom' | 'bottom-top' | 'diagonal-1' | 'diagonal-2'> = 
         ['left-right', 'right-left', 'top-bottom', 'bottom-top', 'diagonal-1', 'diagonal-2'];
@@ -62,24 +64,27 @@ export default function QuizPage() {
 
       // 방향에 따른 시작 위치 설정
       let startPosition = { x: 0, y: 0 };
+      const viewportWidth = typeof window !== 'undefined' ? window.innerWidth : 1200;
+      const viewportHeight = typeof window !== 'undefined' ? window.innerHeight : 800;
+      
       switch (randomDirection) {
         case 'left-right':
-          startPosition = { x: -150, y: Math.random() * (window.innerHeight - 200) };
+          startPosition = { x: -150, y: Math.random() * (viewportHeight - 200) };
           break;
         case 'right-left':
-          startPosition = { x: window.innerWidth + 50, y: Math.random() * (window.innerHeight - 200) };
+          startPosition = { x: viewportWidth + 50, y: Math.random() * (viewportHeight - 200) };
           break;
         case 'top-bottom':
-          startPosition = { x: Math.random() * (window.innerWidth - 200), y: -150 };
+          startPosition = { x: Math.random() * (viewportWidth - 200), y: -150 };
           break;
         case 'bottom-top':
-          startPosition = { x: Math.random() * (window.innerWidth - 200), y: window.innerHeight + 50 };
+          startPosition = { x: Math.random() * (viewportWidth - 200), y: viewportHeight + 50 };
           break;
         case 'diagonal-1':
           startPosition = { x: -150, y: -150 };
           break;
         case 'diagonal-2':
-          startPosition = { x: window.innerWidth + 50, y: window.innerHeight + 50 };
+          startPosition = { x: viewportWidth + 50, y: viewportHeight + 50 };
           break;
       }
 
@@ -91,43 +96,57 @@ export default function QuizPage() {
       };
 
       setTimeout(() => {
-        setThomasExists(true);
+        thomasExistsRef.current = true;
         setDistractions(prev => [
           ...prev.filter(d => d.type !== 'train'), // 기존 토마스 제거
           { ...newThomas, isVisible: true }
         ]);
+        console.log('🚂 토마스 등장!'); // 디버깅용
 
         // 애니메이션 시간 후 자동 제거
         setTimeout(() => {
           setDistractions(prev => prev.filter(d => d.id !== newThomas.id));
-          setThomasExists(false);
+          thomasExistsRef.current = false;
+          console.log('🚂 토마스 사라짐!'); // 디버깅용
         }, 6000); // 6초 동안 유지
-      }, Math.random() * 1500 + 300); // 0.3-1.8초 후에 나타남 (더 빨리!)
+      }, Math.random() * 1500 + 300); // 0.3-1.8초 후에 나타남
     }
-  }, [currentQuestionIndex, thomasExists]);
+  }, []); // 의존성 완전 제거!
 
-  // 랜덤 타이밍으로 토마스 생성
+  // 컴포넌트 마운트 시에만 토마스 생성 스케줄 시작 (완전 독립)
   useEffect(() => {
     let timeoutId: NodeJS.Timeout;
+    let isActive = true;
+    
+    console.log('🚂 토마스 시스템 시작!'); // 디버깅용
     
     const scheduleNextThomas = () => {
-      const randomDelay = Math.random() * 3000 + 2000; // 2-5초 (더 자주!)
+      if (!isActive) return;
+      
+      const randomDelay = Math.random() * 4000 + 2000; // 2-6초 간격
       timeoutId = setTimeout(() => {
-        createThomas();
-        scheduleNextThomas(); // 다음 토마스 스케줄링
+        if (isActive) {
+          createThomas();
+          scheduleNextThomas(); // 다음 토마스 스케줄링
+        }
       }, randomDelay);
     };
     
     scheduleNextThomas(); // 첫 번째 토마스 스케줄링
 
-    return () => clearTimeout(timeoutId);
-  }, [createThomas]);
+    return () => {
+      isActive = false;
+      clearTimeout(timeoutId);
+      console.log('🚂 토마스 시스템 종료!'); // 디버깅용
+    };
+  }, []); // 완전 독립적
 
-  // 질문 변경 시 처리
+  // 질문 변경 시 처리 (토마스와 무관)
   useEffect(() => {
     setQuestionStartTime(Date.now());
     announceToScreenReader(`질문 ${currentQuestionIndex + 1}: ${currentQuestion.question}`);
-  }, [currentQuestionIndex, announceToScreenReader]);
+    // 토마스 상태는 건드리지 않음!
+  }, [currentQuestionIndex, currentQuestion.question, announceToScreenReader]);
 
   // 답변 변경 처리
   const handleAnswerChange = useCallback((value: string) => {
@@ -153,7 +172,7 @@ export default function QuizPage() {
   const handleDistractionClick = useCallback((type: DistractionType, id: string) => {
     // 클릭된 요소 제거
     setDistractions(prev => prev.filter(d => d.id !== id));
-    setThomasExists(false); // 토마스 상태 초기화
+    thomasExistsRef.current = false; // 토마스 상태 초기화
     
     // 효과음 재생 (가능한 경우)
     try {
@@ -239,61 +258,63 @@ export default function QuizPage() {
         aria-atomic="true"
       />
       
-      {/* 산만함 요소들 */}
-      {distractions.map((distraction) => {
-        if (!distraction.isVisible) return null;
-        
-        const config = distractionConfig[distraction.type];
-        let animationClass = '';
-        
-        // 토마스 애니메이션 클래스
-        animationClass = `animate-thomas-${thomasDirection}`;
+      {/* 산만함 요소들 - 질문 변경과 독립적으로 렌더링 */}
+      {useMemo(() => 
+        distractions.map((distraction) => {
+          if (!distraction.isVisible) return null;
+          
+          const config = distractionConfig[distraction.type];
+          let animationClass = '';
+          
+          // 토마스 애니메이션 클래스
+          animationClass = `animate-thomas-${thomasDirection}`;
 
-        return (
-          <div
-            key={distraction.id}
-            className={`fixed z-50 distraction-element ${animationClass} cursor-pointer`}
-            style={{
-              left: `${distraction.position.x}px`,
-              top: `${distraction.position.y}px`,
-            }}
-            onClick={() => handleDistractionClick(distraction.type, distraction.id)}
-            onTouchStart={(e) => {
-              e.preventDefault();
-              handleDistractionClick(distraction.type, distraction.id);
-            }}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' || e.key === ' ') {
+          return (
+            <div
+              key={distraction.id}
+              className={`fixed z-50 distraction-element ${animationClass} cursor-pointer`}
+              style={{
+                left: `${distraction.position.x}px`,
+                top: `${distraction.position.y}px`,
+              }}
+              onClick={() => handleDistractionClick(distraction.type, distraction.id)}
+              onTouchStart={(e) => {
                 e.preventDefault();
                 handleDistractionClick(distraction.type, distraction.id);
-              }
-            }}
-            tabIndex={0}
-            role="button"
-            aria-label={`산만함 요소: ${config.label}을 클릭하세요`}
-          >
-            <div className={`text-4xl md:text-5xl lg:text-6xl hover:scale-110 transition-transform duration-200 ${distraction.type === 'train' ? 'thomas-glow animate-pulse' : ''}`}>
-              {config.image ? (
-                <Image 
-                  src={config.image} 
-                  alt={config.label}
-                  width={120}
-                  height={120}
-                  className={`object-contain ${distraction.type === 'train' ? 'animate-bounce-subtle' : ''}`}
-                />
-              ) : (
-                config.emoji
+              }}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  handleDistractionClick(distraction.type, distraction.id);
+                }
+              }}
+              tabIndex={0}
+              role="button"
+              aria-label={`산만함 요소: ${config.label}을 클릭하세요`}
+            >
+              <div className={`text-4xl md:text-5xl lg:text-6xl hover:scale-110 transition-transform duration-200 ${distraction.type === 'train' ? 'thomas-glow animate-pulse' : ''}`}>
+                {config.image ? (
+                  <Image 
+                    src={config.image} 
+                    alt={config.label}
+                    width={120}
+                    height={120}
+                    className={`object-contain ${distraction.type === 'train' ? 'animate-bounce-subtle' : ''}`}
+                  />
+                ) : (
+                  config.emoji
+                )}
+              </div>
+              {/* 토마스는 라벨 없음 */}
+              {distraction.type !== 'train' && (
+                <div className="distraction-label text-center mt-2 font-bold animate-bounce">
+                  {config.label}
+                </div>
               )}
             </div>
-            {/* 토마스는 라벨 없음 */}
-            {distraction.type !== 'train' && (
-              <div className="distraction-label text-center mt-2 font-bold animate-bounce">
-                {config.label}
-              </div>
-            )}
-          </div>
-        );
-      })}
+          );
+        }), [distractions, thomasDirection, handleDistractionClick]
+      )}
       
       <Card className="glass-card w-full max-w-2xl relative z-10 animate-fade-in-up">
         <CardHeader className="pb-2 sm:pb-4">
