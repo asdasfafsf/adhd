@@ -7,6 +7,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Button } from "@/components/ui/button";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { quizQuestions, evaluateQuizDetailed } from "@/data/quiz";
+import { createResultUrl } from "@/lib/utils";
 
 // 산만함 요소 타입 정의
 type DistractionType = 'train';
@@ -177,30 +178,9 @@ export default function QuizPage() {
       // 오디오 재생 실패는 무시
     }
     
-    // 산만함 요소 클릭 시 특별한 결과 파라미터 전달
-    const resultParams = new URLSearchParams({
-      partA: '24',
-      partB: '36',
-      category: '심각한 ADHD 증상',
-      partACategory: '매우 높음',
-      partBCategory: '매우 높음', 
-      percentage: '100',
-      partAPercentage: '100',
-      partBPercentage: '100',
-      overall: '테스트 도중 산만함 요소에 주의가 끌려 클릭하는 것은 매우 심각한 ADHD 증상을 나타냅니다.',
-      partAInterpretation: '집중이 필요한 상황에서도 주의가 쉽게 분산되어 과제 수행에 큰 어려움이 있습니다.',
-      partBInterpretation: '충동적으로 행동하며 자제력을 유지하기 어려운 상태입니다.',
-      recommendations: JSON.stringify([
-        '⚠️ 즉시 정신건강의학과 전문의 진료를 받으시기 바랍니다',
-        '일상생활에서 ADHD 증상으로 인한 어려움이 클 가능성이 높습니다',
-        '약물치료와 인지행동치료를 통한 전문적 관리가 필요합니다',
-        '가족이나 주변 사람들에게 도움을 요청하시기 바랍니다',
-        '운전이나 위험한 활동 시 각별한 주의가 필요합니다'
-      ]),
-      distraction: type
-    });
-    
-    router.push(`/result?${resultParams.toString()}`);
+    // 산만함 요소 클릭 시 최대 점수로 결과 생성 (압축된 URL 사용)
+    const resultUrl = createResultUrl(24, 36, type);
+    router.push(resultUrl);
   }, [router]);
 
   // 다음 질문으로 이동
@@ -211,28 +191,12 @@ export default function QuizPage() {
       // 모든 답변을 배열로 변환 (순서대로)
       const answersArray = quizQuestions.map(q => answers[q.id] ?? 0);
       
-      // 개선된 평가함수 사용
+      // 개선된 평가함수 사용 (점수만 계산용)
       const evaluation = evaluateQuizDetailed(answersArray);
       
-      // 결과를 URL 파라미터로 인코딩
-      const resultParams = new URLSearchParams({
-        total: evaluation.total.toString(),
-        partA: evaluation.partA.toString(),
-        partB: evaluation.partB.toString(),
-        category: evaluation.category,
-        partACategory: evaluation.partACategory,
-        partBCategory: evaluation.partBCategory,
-        percentage: evaluation.percentage.toString(),
-        partAPercentage: evaluation.partAPercentage.toString(),
-        partBPercentage: evaluation.partBPercentage.toString(),
-        riskLevel: evaluation.riskLevel,
-        overall: evaluation.interpretation.overall,
-        partAInterpretation: evaluation.interpretation.partA,
-        partBInterpretation: evaluation.interpretation.partB,
-        recommendations: JSON.stringify(evaluation.interpretation.recommendations)
-      });
-      
-      router.push(`/result?${resultParams.toString()}`);
+      // 압축된 URL로 결과 전달 (점수만 포함)
+      const resultUrl = createResultUrl(evaluation.partA, evaluation.partB);
+      router.push(resultUrl);
     }
   }, [currentQuestionIndex, answers, router]);
 

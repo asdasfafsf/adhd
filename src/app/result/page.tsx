@@ -7,6 +7,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import type { Category, PartCategory } from "@/data/quiz";
+import { extractResultFromUrl } from "@/lib/utils";
+import { evaluateQuizDetailed } from "@/data/quiz";
 
 // 카테고리별 결과 설정
 interface CategoryConfig {
@@ -199,26 +201,100 @@ function ResultLoading() {
 function ResultContent() {
   const searchParams = useSearchParams();
   
-  // 새로운 평가 결과 파라미터들 가져오기
-  const partA = parseInt(searchParams.get("partA") || "0");
-  const partB = parseInt(searchParams.get("partB") || "0");
-  const category = (searchParams.get("category") || "낮음") as Category;
-  const partACategory = (searchParams.get("partACategory") || "낮음") as PartCategory;
-  const partBCategory = (searchParams.get("partBCategory") || "낮음") as PartCategory;
-  const percentage = parseInt(searchParams.get("percentage") || "0");
-  const partAPercentage = parseInt(searchParams.get("partAPercentage") || "0");
-  const partBPercentage = parseInt(searchParams.get("partBPercentage") || "0");
-  const overall = searchParams.get("overall") || "";
-  const partAInterpretation = searchParams.get("partAInterpretation") || "";
-  const partBInterpretation = searchParams.get("partBInterpretation") || "";
-  const recommendations = JSON.parse(searchParams.get("recommendations") || "[]") as string[];
+  // 압축된 데이터에서 결과 추출
+  const compactResult = extractResultFromUrl(searchParams);
   
-  // 향후 확장을 위해 보존 (현재 미사용)
-  // const total = parseInt(searchParams.get("total") || "0");
-  // const riskLevel = searchParams.get("riskLevel") || "low";
+  // 압축된 데이터가 없으면 기존 방식으로 폴백 (호환성)
+  let partA: number, partB: number, distractionType: string | undefined;
+  let evaluation: {
+    partA: number;
+    partB: number;
+    category: Category;
+    partACategory: PartCategory;
+    partBCategory: PartCategory;
+    percentage: number;
+    partAPercentage: number;
+    partBPercentage: number;
+    interpretation: {
+      overall: string;
+      partA: string;
+      partB: string;
+      recommendations: string[];
+    };
+  };
   
-  // 산만함 요소 (기존 로직 유지)
-  const distractionType = searchParams.get("distraction");
+  if (compactResult) {
+    // 새로운 압축 방식: 점수만 저장하고 나머지는 재계산
+    partA = compactResult.pA;
+    partB = compactResult.pB;
+    distractionType = compactResult.d;
+    
+    // 산만함 요소 클릭의 경우 특별 처리
+    if (distractionType) {
+             // 산만함 요소 클릭 시 최대 점수 평가 결과 생성
+       evaluation = {
+         partA: 24,
+         partB: 36,
+         category: '심각한 ADHD 증상' as Category,
+         partACategory: '매우 높음' as PartCategory,
+         partBCategory: '매우 높음' as PartCategory,
+         percentage: 100,
+         partAPercentage: 100,
+         partBPercentage: 100,
+         interpretation: {
+           overall: '테스트 도중 산만함 요소에 주의가 끌려 클릭하는 것은 매우 심각한 ADHD 증상을 나타냅니다.',
+           partA: '집중이 필요한 상황에서도 주의가 쉽게 분산되어 과제 수행에 큰 어려움이 있습니다.',
+           partB: '충동적으로 행동하며 자제력을 유지하기 어려한 상태입니다.',
+           recommendations: [
+             '⚠️ 즉시 정신건강의학과 전문의 진료를 받으시기 바랍니다',
+             '일상생활에서 ADHD 증상으로 인한 어려움이 클 가능성이 높습니다',
+             '약물치료와 인지행동치료를 통한 전문적 관리가 필요합니다',
+             '가족이나 주변 사람들에게 도움을 요청하시기 바랍니다',
+             '운전이나 위험한 활동 시 각별한 주의가 필요합니다'
+           ]
+         }
+       };
+    } else {
+             // 정상 테스트 완료: 점수로 재평가
+       // partA(24점 만점)와 partB(36점 만점)를 18문항 기준으로 변환
+       const avgPartA = Math.round((partA / 24) * 4);
+       const avgPartB = Math.round((partB / 48) * 4);
+       const partAAnswers = Array(6).fill(avgPartA);
+       const partBAnswers = Array(12).fill(avgPartB);
+       const answersArray = [...partAAnswers, ...partBAnswers];
+      
+      evaluation = evaluateQuizDetailed(answersArray);
+    }
+  } else {
+    // 기존 방식 폴백 (호환성 유지)
+    partA = parseInt(searchParams.get("partA") || "0");
+    partB = parseInt(searchParams.get("partB") || "0");
+    distractionType = searchParams.get("distraction") || undefined;
+    
+    const category = (searchParams.get("category") || "낮음") as Category;
+    const partACategory = (searchParams.get("partACategory") || "낮음") as PartCategory;
+    const partBCategory = (searchParams.get("partBCategory") || "낮음") as PartCategory;
+    const percentage = parseInt(searchParams.get("percentage") || "0");
+    const partAPercentage = parseInt(searchParams.get("partAPercentage") || "0");
+    const partBPercentage = parseInt(searchParams.get("partBPercentage") || "0");
+    const overall = searchParams.get("overall") || "";
+    const partAInterpretation = searchParams.get("partAInterpretation") || "";
+    const partBInterpretation = searchParams.get("partBInterpretation") || "";
+    const recommendations = JSON.parse(searchParams.get("recommendations") || "[]") as string[];
+    
+    evaluation = {
+      partA, partB,
+      category, partACategory, partBCategory,
+      percentage, partAPercentage, partBPercentage,
+      interpretation: {
+        overall, partA: partAInterpretation, partB: partBInterpretation, recommendations
+      }
+    };
+  }
+  
+  // 평가 결과에서 데이터 추출
+  const { category, partACategory, partBCategory, percentage, partAPercentage, partBPercentage } = evaluation;
+  const { overall, partA: partAInterpretation, partB: partBInterpretation, recommendations } = evaluation.interpretation;
   
   const [animatedPercentage, setAnimatedPercentage] = useState(0);
   const [animatedPartA, setAnimatedPartA] = useState(0);
