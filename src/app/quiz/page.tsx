@@ -52,8 +52,8 @@ export default function QuizPage() {
     // 이미 토마스가 존재하면 생성하지 않음
     if (thomasExists) return;
 
-    // 2번째 질문부터 랜덤하게 나타남
-    if (currentQuestionIndex >= 1 && Math.random() < 0.65) {
+    // 첫 번째 질문부터 랜덤하게 나타남 (높은 확률)
+    if (currentQuestionIndex >= 0 && Math.random() < 0.85) {
       // 다양한 방향 중 랜덤 선택
       const directions: Array<'left-right' | 'right-left' | 'top-bottom' | 'bottom-top' | 'diagonal-1' | 'diagonal-2'> = 
         ['left-right', 'right-left', 'top-bottom', 'bottom-top', 'diagonal-1', 'diagonal-2'];
@@ -102,7 +102,7 @@ export default function QuizPage() {
           setDistractions(prev => prev.filter(d => d.id !== newThomas.id));
           setThomasExists(false);
         }, 6000); // 6초 동안 유지
-      }, Math.random() * 2000 + 500); // 0.5-2.5초 후에 나타남
+      }, Math.random() * 1500 + 300); // 0.3-1.8초 후에 나타남 (더 빨리!)
     }
   }, [currentQuestionIndex, thomasExists]);
 
@@ -111,7 +111,7 @@ export default function QuizPage() {
     let timeoutId: NodeJS.Timeout;
     
     const scheduleNextThomas = () => {
-      const randomDelay = Math.random() * 5000 + 3000; // 3-8초
+      const randomDelay = Math.random() * 3000 + 2000; // 2-5초 (더 자주!)
       timeoutId = setTimeout(() => {
         createThomas();
         scheduleNextThomas(); // 다음 토마스 스케줄링
@@ -178,8 +178,10 @@ export default function QuizPage() {
       // 오디오 재생 실패는 무시
     }
     
-    // 산만함 요소 클릭 시 최대 점수로 결과 생성 (압축된 URL 사용)
-    const resultUrl = createResultUrl(24, 36, type);
+    // 산만함 요소 클릭 시 최대 점수로 결과 생성 (압축된 URL 사용) - 무조건 만점!
+    const resultUrl = createResultUrl(24, 48, type);
+    console.log('🚂 토마스 클릭! 생성된 URL:', resultUrl);
+    console.log('🚂 토마스 타입:', type);
     router.push(resultUrl);
   }, [router]);
 

@@ -201,8 +201,17 @@ function ResultLoading() {
 function ResultContent() {
   const searchParams = useSearchParams();
   
+  // 디버깅: URL 파라미터 확인
+  console.log('🔍 현재 URL 파라미터들:', {
+    all: Object.fromEntries(searchParams.entries()),
+    d: searchParams.get('d'),
+    partA: searchParams.get('partA'),
+    partB: searchParams.get('partB')
+  });
+  
   // 압축된 데이터에서 결과 추출
   const compactResult = extractResultFromUrl(searchParams);
+  console.log('🔍 압축된 결과 데이터:', compactResult);
   
   // 압축된 데이터가 없으면 기존 방식으로 폴백 (호환성)
   let partA: number, partB: number, distractionType: string | undefined;
@@ -231,20 +240,20 @@ function ResultContent() {
     
     // 산만함 요소 클릭의 경우 특별 처리
     if (distractionType) {
-             // 산만함 요소 클릭 시 최대 점수 평가 결과 생성
+             // 산만함 요소 클릭 시 최대 점수 평가 결과 생성 (무조건 만점!)
        evaluation = {
          partA: 24,
-         partB: 36,
-         category: '심각한 ADHD 증상' as Category,
-         partACategory: '매우 높음' as PartCategory,
-         partBCategory: '매우 높음' as PartCategory,
-         percentage: 100,
-         partAPercentage: 100,
-         partBPercentage: 100,
+         partB: 48, // 48점 만점으로 변경!
+         category: '매우 높음' as Category,
+         partACategory: '높음' as PartCategory,
+         partBCategory: '높음' as PartCategory,
+         percentage: 100, // 무조건 100%
+         partAPercentage: 100, // 무조건 100%
+         partBPercentage: 100, // 무조건 100%
          interpretation: {
            overall: '테스트 도중 산만함 요소에 주의가 끌려 클릭하는 것은 매우 심각한 ADHD 증상을 나타냅니다.',
            partA: '집중이 필요한 상황에서도 주의가 쉽게 분산되어 과제 수행에 큰 어려움이 있습니다.',
-           partB: '충동적으로 행동하며 자제력을 유지하기 어려한 상태입니다.',
+           partB: '충동적으로 행동하며 자제력을 유지하기 어려운 상태입니다.',
            recommendations: [
              '⚠️ 즉시 정신건강의학과 전문의 진료를 받으시기 바랍니다',
              '일상생활에서 ADHD 증상으로 인한 어려움이 클 가능성이 높습니다',
