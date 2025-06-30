@@ -1,5 +1,6 @@
 "use client";
 
+import { Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -135,7 +136,67 @@ const getDistractionMessage = (type: string) => {
   return messages[type as keyof typeof messages] || messages.train;
 };
 
-export default function ResultPage() {
+// 로딩 컴포넌트
+function ResultLoading() {
+  return (
+    <div className="gradient-bg flex min-h-screen items-center justify-center p-4">
+      <div className="absolute inset-0 bg-gradient-to-br from-blue-500/8 via-transparent to-emerald-500/8"></div>
+      
+      <div className="w-full max-w-4xl space-y-6 relative z-10">
+        <Card className="glass-card text-center">
+          <CardHeader className="pb-8">
+            <div className="mx-auto mb-8 w-24 h-24 bg-gradient-to-br from-blue-500/20 to-emerald-500/20 rounded-full flex items-center justify-center animate-pulse">
+              <div className="text-4xl">📊</div>
+            </div>
+            
+            <CardTitle className="text-3xl md:text-4xl font-bold gradient-text mb-6">
+              결과 분석 중...
+            </CardTitle>
+            <CardDescription className="text-lg md:text-xl text-muted-foreground">
+              잠시만 기다려주세요
+            </CardDescription>
+          </CardHeader>
+          
+          <CardContent className="space-y-8">
+            <div className="relative w-48 h-48 mx-auto">
+              <svg className="w-48 h-48 transform -rotate-90 animate-spin" viewBox="0 0 200 200">
+                <circle
+                  cx="100"
+                  cy="100"
+                  r="90"
+                  stroke="currentColor"
+                  strokeWidth="12"
+                  fill="transparent"
+                  className="text-muted/20"
+                />
+                <circle
+                  cx="100"
+                  cy="100"
+                  r="90"
+                  stroke="url(#gradient)"
+                  strokeWidth="12"
+                  fill="transparent"
+                  strokeDasharray="180 565"
+                  strokeLinecap="round"
+                  className="text-blue-500"
+                />
+                <defs>
+                  <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" className="text-blue-500" stopColor="currentColor" />
+                    <stop offset="100%" className="text-emerald-500" stopColor="currentColor" />
+                  </linearGradient>
+                </defs>
+              </svg>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  );
+}
+
+// 실제 결과 컨텐츠 컴포넌트 (useSearchParams 사용)
+function ResultContent() {
   const searchParams = useSearchParams();
   
   // 새로운 평가 결과 파라미터들 가져오기
@@ -453,41 +514,48 @@ export default function ResultPage() {
             </Button>
           </Link>
           
-        <div className="w-full px-4">
-          <Button 
-            onClick={shareResult}
-            variant="outline"
-            className="w-full h-16 px-8 text-lg rounded-xl font-semibold transition-all duration-300 bg-secondary/50 hover:bg-secondary/80 border-2 group"
-            aria-label="결과 공유하기"
-          >
-            <svg className="w-5 h-5 mr-3 transition-transform duration-300 group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z" />
-            </svg>
-            결과 공유하기
-          </Button>
+          <div className="flex flex-col sm:flex-row gap-4 px-4">
+            <Button 
+              onClick={shareResult}
+              variant="outline" 
+              className="flex-1 h-12 text-base rounded-xl font-medium transition-all duration-300 hover:shadow-md group" 
+              aria-label="결과 공유하기"
+            >
+              <svg className="w-4 h-4 mr-2 transition-transform duration-300 group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z" />
+              </svg>
+              결과 공유
+            </Button>
+            
+            <Link href="/quiz" className="flex-1">
+              <Button 
+                variant="outline" 
+                className="w-full h-12 text-base rounded-xl font-medium transition-all duration-300 hover:shadow-md group" 
+                aria-label="다른 사람도 테스트해보기"
+              >
+                <svg className="w-4 h-4 mr-2 transition-transform duration-300 group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                </svg>
+                다른 사람도 테스트
+              </Button>
+            </Link>
           </div>
-          
         </div>
-        
-        {/* 면책 조항 */}
-        <Card className="glass-card bg-gradient-to-r from-amber-50/80 to-orange-50/80 border-amber-200/50 animate-fade-in-up" style={{ animationDelay: '0.6s' }}>
-          <CardContent className="p-6">
-            <div className="text-center">
-              <h4 className="font-semibold text-amber-800 mb-4 text-lg">중요한 안내사항</h4>
-              <p className="text-base text-amber-700 leading-relaxed">
-                이 테스트는 교육 및 정보 제공 목적으로만 사용되며, 의학적 진단을 대체할 수 없습니다. 
-                ADHD가 의심되거나 일상생활에 지장이 있다면 정신건강 전문의와 상담받으시기 바랍니다.
-              </p>
-            </div>
-          </CardContent>
-        </Card>
       </div>
       
       {/* 장식적 요소들 */}
-      <div className="absolute top-20 right-20 w-32 h-32 bg-gradient-to-br from-blue-400/10 to-cyan-400/10 rounded-full blur-xl animate-float"></div>
-      <div className="absolute bottom-20 left-20 w-40 h-40 bg-gradient-to-br from-emerald-400/10 to-teal-400/10 rounded-full blur-xl animate-float" style={{ animationDelay: '2s' }}></div>
-      <div className="absolute top-1/2 right-10 w-20 h-20 bg-gradient-to-br from-purple-400/10 to-pink-400/10 rounded-full blur-xl animate-float" style={{ animationDelay: '4s' }}></div>
-      <div className="absolute bottom-1/3 left-16 w-24 h-24 bg-gradient-to-br from-amber-400/8 to-orange-400/8 rounded-full blur-xl animate-float" style={{ animationDelay: '6s' }}></div>
+      <div className="absolute top-10 right-10 w-20 h-20 bg-gradient-to-br from-blue-400/10 to-cyan-400/10 rounded-full blur-xl animate-float"></div>
+      <div className="absolute bottom-10 left-10 w-32 h-32 bg-gradient-to-br from-emerald-400/10 to-teal-400/10 rounded-full blur-xl animate-float" style={{ animationDelay: '1s' }}></div>
+      <div className="absolute top-1/2 right-5 w-16 h-16 bg-gradient-to-br from-purple-400/10 to-pink-400/10 rounded-full blur-xl animate-float" style={{ animationDelay: '2s' }}></div>
     </div>
+  );
+}
+
+// 메인 페이지 컴포넌트 (Suspense 경계 제공)
+export default function ResultPage() {
+  return (
+    <Suspense fallback={<ResultLoading />}>
+      <ResultContent />
+    </Suspense>
   );
 }
